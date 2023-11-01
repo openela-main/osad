@@ -1,0 +1,23 @@
+diff --git a/osad.spec b/osad.spec
+index 8d7683b8fe..48acac82cf 100644
+--- a/osad.spec
++++ b/osad.spec
+@@ -24,7 +24,7 @@ Name: osad
+ Summary: Open Source Architecture Daemon
+ License: GPLv2
+ Version: 5.11.99
+-Release: 1%{?dist}
++Release: 2%{?dist}
+ URL:     https://github.com/spacewalkproject/spacewalk
+ Source0: https://github.com/spacewalkproject/spacewalk/archive/%{name}-%{version}.tar.gz
+ BuildArch: noarch
+@@ -514,6 +514,9 @@ rpm -ql osa-dispatcher | xargs -n 1 /sbin/restorecon -rvi {}
+ %endif
+ 
+ %changelog
++* Mon Mar 05 2018 Tomas Kasparek <tkasparek@redhat.com> 5.11.99-2
++- rebuild for rhel8
++
+ * Fri Feb 09 2018 Michael Mraka <michael.mraka@redhat.com> 5.11.99-1
+ - removed %%%%defattr from specfile
+ - remove install/clean section initial cleanup

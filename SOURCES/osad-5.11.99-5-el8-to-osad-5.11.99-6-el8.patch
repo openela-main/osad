@@ -1,0 +1,68 @@
+diff --git a/osad.spec b/osad.spec
+index 2e6884cf75..5f5102dd74 100644
+--- a/osad.spec
++++ b/osad.spec
+@@ -28,7 +28,7 @@ Name: osad
+ Summary: Open Source Architecture Daemon
+ License: GPLv2
+ Version: 5.11.99
+-Release: 5%{?dist}
++Release: 6%{?dist}
+ URL:     https://github.com/spacewalkproject/spacewalk
+ Source0: https://github.com/spacewalkproject/spacewalk/archive/%{name}-%{version}.tar.gz
+ BuildArch: noarch
+@@ -116,22 +116,28 @@ sed -i 's@^#!/usr/bin/python$@#!/usr/bin/python -s@' invocation.py
+ %endif
+ 
+ %build
+-make -f Makefile.osad all PYTHONPATH=%{python_sitelib}
++%if 0%{?default_py3}
++make -f Makefile.osad all PYTHONPATH=%{python3_sitelib}
++%else
++make -f Makefile.osad all PYTHONPATH=%{python2_sitelib}
++%endif
+ 
+ %install
+ install -d $RPM_BUILD_ROOT%{rhnroot}
++%if 0%{?build_py2}
+ make -f Makefile.osad install PREFIX=$RPM_BUILD_ROOT ROOT=%{rhnroot} INITDIR=%{_initrddir} \
+-        PYTHONPATH=%{python_sitelib} PYTHONVERSION=%{python_version}
++        PYTHONPATH=%{python2_sitelib} PYTHONVERSION=%{python2_version}
++%endif
+ %if 0%{?build_py3}
+ make -f Makefile.osad install PREFIX=$RPM_BUILD_ROOT ROOT=%{rhnroot} INITDIR=%{_initrddir} \
+         PYTHONPATH=%{python3_sitelib} PYTHONVERSION=%{python3_version}
+ sed -i 's|#!/usr/bin/python|#!/usr/bin/python3|' $RPM_BUILD_ROOT/usr/sbin/osad-%{python3_version}
+ %endif
+ 
+-%define default_suffix %{?default_py3:-%{python3_version}}%{!?default_py3:-%{python_version}}
++%define default_suffix %{?default_py3:-%{python3_version}}%{!?default_py3:-%{python2_version}}
+ ln -s osad%{default_suffix} $RPM_BUILD_ROOT/usr/sbin/osad
+ # osa-dispatcher is python2 even on Fedora
+-ln -s osa-dispatcher-%{python_version} $RPM_BUILD_ROOT/usr/sbin/osa-dispatcher
++ln -s osa-dispatcher-%{python2_version} $RPM_BUILD_ROOT/usr/sbin/osa-dispatcher
+ 
+ mkdir -p %{buildroot}%{_var}/log/rhn
+ touch %{buildroot}%{_var}/log/osad
+@@ -149,8 +155,8 @@ install -m 0644 osad.service $RPM_BUILD_ROOT/%{_unitdir}/
+ install -m 0644 osa-dispatcher.service $RPM_BUILD_ROOT/%{_unitdir}/
+ %endif
+ 
+-rm -rf $RPM_BUILD_ROOT/%{python_sitelib}/*
+-rm -f $RPM_BUILD_ROOT/usr/sbin/osad-%{python_version}
++rm -rf $RPM_BUILD_ROOT/%{python2_sitelib}/*
++rm -f $RPM_BUILD_ROOT/usr/sbin/osad-%{python2_version}
+ rm -f $RPM_BUILD_ROOT/usr/sbin/osa-dispatcher*
+ rm -f $RPM_BUILD_ROOT/etc/logrotate.d/osa-dispatcher
+ rm -f $RPM_BUILD_ROOT/etc/rhn/tns_admin/osa-dispatcher/sqlnet.ora
+@@ -254,6 +260,10 @@ fi
+ %{python3_sitelib}/osad/__pycache__/rhn_log.*
+ 
+ %changelog
++* Tue Jul 24 2018 Tomas Kasparek <tkasparek@redhat.com> 5.11.99-6
++- prefer to build for python3... (nils@redhat.com)
++- use %%python2_* instead of unversioned macros (nils@redhat.com)
++
+ * Mon Apr 16 2018 Tomas Kasparek <tkasparek@redhat.com> 5.11.99-5
+ - don't build osa-dispatcher and python2 subpackages (tkasparek@redhat.com)
+ 

@@ -1,0 +1,36 @@
+diff --git a/osad.spec b/osad.spec
+index 5f5102dd74..3f3cb68b6a 100644
+--- a/osad.spec
++++ b/osad.spec
+@@ -28,7 +28,7 @@ Name: osad
+ Summary: Open Source Architecture Daemon
+ License: GPLv2
+ Version: 5.11.99
+-Release: 6%{?dist}
++Release: 7%{?dist}
+ URL:     https://github.com/spacewalkproject/spacewalk
+ Source0: https://github.com/spacewalkproject/spacewalk/archive/%{name}-%{version}.tar.gz
+ BuildArch: noarch
+@@ -260,6 +260,10 @@ fi
+ %{python3_sitelib}/osad/__pycache__/rhn_log.*
+ 
+ %changelog
++* Fri Aug 10 2018 Tomas Kasparek <tkasparek@redhat.com> 5.11.99-7
++- Resolves: #1607909 - remove TLSv1 hardcode and let client/server negotiate
++  (tkasparek@redhat.com)
++
+ * Tue Jul 24 2018 Tomas Kasparek <tkasparek@redhat.com> 5.11.99-6
+ - prefer to build for python3... (nils@redhat.com)
+ - use %%python2_* instead of unversioned macros (nils@redhat.com)
+diff --git a/src/jabber_lib.py b/src/jabber_lib.py
+index 6df1aa590e..8d2d7fde2f 100644
+--- a/src/jabber_lib.py
++++ b/src/jabber_lib.py
+@@ -652,7 +652,6 @@ class JabberClient(jabber.Client, object):
+ 
+         log_debug(4, "Preparing for TLS handshake")
+         ssl = SSLSocket(self._sock, trusted_certs=self.trusted_certs)
+-        ssl._ssl_method = SSL.SSL.TLSv1_METHOD
+         ssl.ssl_verify_callback = self.ssl_verify_callback
+         ssl.init_ssl()
+         # Explicitly perform the SSL handshake
