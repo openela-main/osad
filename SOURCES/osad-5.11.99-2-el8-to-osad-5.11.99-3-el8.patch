@@ -1,0 +1,32 @@
+diff --git a/osad.spec b/osad.spec
+index 48acac82cf..70eb1b150e 100644
+--- a/osad.spec
++++ b/osad.spec
+@@ -13,7 +13,7 @@
+ %global include_selinux_package 1
+ %endif
+ 
+-%if 0%{?fedora}
++%if 0%{?fedora} || 0%{?rhel} >= 8
+ %global build_py3   1
+ %global default_py3 1
+ %endif
+@@ -24,7 +24,7 @@ Name: osad
+ Summary: Open Source Architecture Daemon
+ License: GPLv2
+ Version: 5.11.99
+-Release: 2%{?dist}
++Release: 3%{?dist}
+ URL:     https://github.com/spacewalkproject/spacewalk
+ Source0: https://github.com/spacewalkproject/spacewalk/archive/%{name}-%{version}.tar.gz
+ BuildArch: noarch
+@@ -514,6 +514,9 @@ rpm -ql osa-dispatcher | xargs -n 1 /sbin/restorecon -rvi {}
+ %endif
+ 
+ %changelog
++* Wed Mar 14 2018 Tomas Kasparek <tkasparek@redhat.com> 5.11.99-3
++- build osad for python3 (tkasparek@redhat.com)
++
+ * Mon Mar 05 2018 Tomas Kasparek <tkasparek@redhat.com> 5.11.99-2
+ - rebuild for rhel8
+ 
